@@ -1,7 +1,7 @@
 Media Repeater
 ==============
 
-For learning foreign language to repeat playback media files.
+For learning language repeat playback media files.
 
 Install
 -------
