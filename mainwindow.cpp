@@ -40,7 +40,8 @@ MainWindow::~MainWindow()
     settings.setValue("playlist/NumberOfEntries", count);
     for (int i=0;i<count;i++) {
         key = playList->item(i)->text();
-        settings.setValue(QString("playlist/File%1").arg(i), medias[key]);
+        QByteArray encodedString = QUrl::toPercentEncoding(medias[key], "/");
+        settings.setValue(QString("playlist/File%1").arg(i), QString(encodedString));
     }
     settings.sync();
 }
@@ -383,8 +384,10 @@ void MainWindow::setupUi()
     int plsCount = settings.value("playlist/NumberOfEntries", 0).toInt(); 
     QString filepath, basename;
     QFileInfo fi;
+    QByteArray ba;
     for (int i=0;i<plsCount;i++) {
-        filepath = settings.value(QString("playlist/File%1").arg(i)).toString();
+        ba = settings.value(QString("playlist/File%1").arg(i)).toByteArray();
+        filepath = QUrl::fromPercentEncoding(ba);
         fi.setFile(filepath);
         basename = fi.completeBaseName();
         playList->addItem(basename);
