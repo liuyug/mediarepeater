@@ -14,6 +14,7 @@ class QListWidget;
 class QLCDNumber;
 class QWebView;
 class QListWidgetItem;
+class QSplitter;
 
 class MediaSeekSlider;
 class MediaVideoWidget;
@@ -43,7 +44,6 @@ class MainWindow : public QMainWindow
         void listClicked(QListWidgetItem * item);
         void markA();
         void markB();
-        void setRepeatAB();
 
     private:
         void setupActions();
@@ -57,9 +57,12 @@ class MainWindow : public QMainWindow
         Phonon::VolumeSlider *volumeSlider;
         QMap<QString, QString> medias;
 
+        QSplitter *vSplitter;
+
         QAction *playAction;
         QAction *pauseAction;
         QAction *stopAction;
+        QAction *repeatAction;
         QAction *nextAction;
         QAction *previousAction;
         QAction *aAction;
@@ -78,6 +81,7 @@ class MainWindow : public QMainWindow
         QLCDNumber *timeLcd;
         QListWidget *playList;
         QWebView *webView;
+        int videoSize;
 };
 
 #endif

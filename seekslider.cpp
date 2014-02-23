@@ -303,6 +303,7 @@ void MediaSeekSlider::seekableChanged(bool isSeekable)
             case Phonon::StoppedState:
             case Phonon::LoadingState:
             case Phonon::ErrorState:
+                qDebug()<<"State Error"<<__FUNCTION__<<mediaObject()->errorString();
                 setEnabled(false);
                 _ticking = true;
                 setValue(0);
@@ -340,6 +341,7 @@ void MediaSeekSlider::stateChanged(Phonon::State newstate)
         case Phonon::StoppedState:
         case Phonon::LoadingState:
         case Phonon::ErrorState:
+            qDebug()<<"State Error"<<__FUNCTION__<<mediaObject()->errorString();
             setEnabled(false);
             _ticking = true;
             setValue(0);

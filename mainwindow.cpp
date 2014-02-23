@@ -28,10 +28,11 @@ MainWindow::MainWindow()
     setupMenus();
     setupUi();
     timeLcd->display("00:00:00");
+    videoSize = 0;
 }
 
 MainWindow::~MainWindow()
-{ 
+{
     QSettings settings("default.pls", QSettings::IniFormat);
     settings.setIniCodec("utf-8");
     settings.clear();
@@ -98,7 +99,7 @@ void MainWindow::stateChanged(Phonon::State newState, Phonon::State /* oldState 
 {
     switch (newState) {
         case Phonon::ErrorState:
-            qDebug()<<"Error"<<mediaObject->errorString();
+            qDebug()<<"State Error"<<__FUNCTION__<<mediaObject->errorString();
             break;
         case Phonon::PlayingState:
             playAction->setEnabled(false);
@@ -163,22 +164,41 @@ void MainWindow::sourceChanged(const Phonon::MediaSource &source)
     QString message = QString(tr("Playing %1")).arg(fi.fileName());
     qDebug()<<message;
     statusBar()->showMessage(message);
+    // hasVideoChanged don't been emited on music.
+    // only write here.
+    QString playingFile = source.fileName();
+    QStringList exts;
+    exts.append(".html");
+    exts.append(".htm");
+    exts.append(".txt");
+    foreach(QString ext, exts) {
+        QString txt = playingFile;
+        txt.replace(QRegExp("\\..*$"), ext);
+        if (QFile::exists(txt)) {
+            webView->load(QUrl::fromLocalFile(txt));
+            break;
+        }
+    }
 }
 
 void MainWindow::aboutToFinish()
 {
-    QFileInfo fi = QFileInfo(mediaObject->currentSource().fileName());
-    QList<QListWidgetItem *> list = playList->findItems(
-            fi.completeBaseName(),
-            Qt::MatchFixedString
-            );
-    int next_idx;
-    if(!list.empty()){
-        next_idx = playList->row(list[0]) + 1;
-        next_idx = (playList->count() > next_idx)? next_idx : 0;
-        mediaObject->enqueue(Phonon::MediaSource(
-                    medias[playList->item(next_idx)->text()]
-                    ));
+    if (repeatAction->isChecked()) {
+        mediaObject->enqueue(mediaObject->currentSource());
+    } else {
+        QFileInfo fi = QFileInfo(mediaObject->currentSource().fileName());
+        QList<QListWidgetItem *> list = playList->findItems(
+                fi.completeBaseName(),
+                Qt::MatchFixedString
+                );
+        int next_idx;
+        if (!list.empty()){
+            next_idx = playList->row(list[0]) + 1;
+            next_idx = (playList->count() > next_idx)? next_idx : 0;
+            mediaObject->enqueue(Phonon::MediaSource(
+                        medias[playList->item(next_idx)->text()]
+                        ));
+        }
     }
 }
 
@@ -224,12 +244,6 @@ void MainWindow::playPrevious()
     }
 }
 
-void MainWindow::setRepeatAB()
-{
-    qDebug()<<"Repeat AB"<<repeatABAction->isChecked();
-    statusBar()->showMessage(tr("Repeat AB"));
-}
-
 void MainWindow::markA()
 {
     seekSlider->setAPosition();
@@ -244,12 +258,38 @@ void MainWindow::markB()
     statusBar()->showMessage(tr("Mark B position"));
 }
 
+#define HIDE_VIDEO 0
 void MainWindow::hasVideoChanged(bool hasVideo)
 {
-    if (hasVideo) 
+#if HIDE_VIDEO
+    if (hasVideo) {
         videoOutput->enterVideoMode();
-    else
+        if (!videoOutput->isVisible()) {
+            videoOutput->show();
+        }
+    } else {
         videoOutput->enterImageMode();
+        if (videoOutput->isVisible()) {
+            videoOutput->hide();
+        }
+    }
+#else
+    QList<int> widgetSizes = vSplitter->sizes();
+    qDebug()<<__FUNCTION__<<widgetSizes;
+    if (hasVideo) {
+        qDebug()<<videoSize;
+        if (videoOutput->height() == 0) {
+            widgetSizes[0] = videoSize ;
+            widgetSizes[1] -= videoSize;
+        }
+    } else {
+        videoSize = widgetSizes[0];
+        widgetSizes[1] += widgetSizes[0];
+        widgetSizes[0] = 0;
+    }
+    qDebug()<<__FUNCTION__<<widgetSizes;
+    vSplitter->setSizes(widgetSizes);
+#endif
 }
 
 void MainWindow::setupActions()
@@ -260,6 +300,8 @@ void MainWindow::setupActions()
     pauseAction->setDisabled(true);
     stopAction = new QAction(style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"), this);
     stopAction->setDisabled(true);
+    repeatAction = new QAction(QIcon::fromTheme("view-refresh"), tr("Repeat"), this);
+    repeatAction->setCheckable(true);
     nextAction = new QAction(style()->standardIcon(QStyle::SP_MediaSkipForward), tr("Next"), this);
     previousAction = new QAction(style()->standardIcon(QStyle::SP_MediaSkipBackward), tr("Previous"), this);
     addFilesAction = new QAction(tr("Add &Files"), this);
@@ -275,10 +317,9 @@ void MainWindow::setupActions()
     clearABAction = new QAction(tr("Clear AB"), this);
     repeatABAction = new QAction(tr("Repeat AB"), this);
     repeatABAction->setCheckable(true);
-    repeatABAction->setShortcut(tr("Ctrl+R"));
     // for playlist
-    addAction = new QAction(tr("+"), this);
-    removeAction = new QAction(tr("-"), this);
+    addAction = new QAction(QIcon::fromTheme("list-add"), tr("Add item"), this);
+    removeAction = new QAction(QIcon::fromTheme("list-remove"), tr("Remove item"), this);
 
     connect(playAction, SIGNAL(triggered()), mediaObject, SLOT(play()));
     connect(pauseAction, SIGNAL(triggered()), mediaObject, SLOT(pause()) );
@@ -289,7 +330,6 @@ void MainWindow::setupActions()
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-    connect(repeatABAction, SIGNAL(triggered()), this, SLOT(setRepeatAB()));
     connect(aAction, SIGNAL(triggered()), this, SLOT(markA()));
     connect(bAction, SIGNAL(triggered()), this, SLOT(markB()));
     connect(addAction, SIGNAL(triggered()), this, SLOT(addFiles()));
@@ -321,6 +361,7 @@ void MainWindow::setupUi()
     bar->addAction(playAction);
     bar->addAction(pauseAction);
     bar->addAction(stopAction);
+    bar->addAction(repeatAction);
     bar->addAction(previousAction);
     bar->addAction(nextAction);
     bar->addAction(aAction);
@@ -352,28 +393,25 @@ void MainWindow::setupUi()
     playbackLayout->addStretch();
     playbackLayout->addWidget(volumeSlider);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(videoOutput);
-    mainLayout->addLayout(seekerLayout);
-    mainLayout->addLayout(playbackLayout);
-
-    QWidget *controlPanel = new QWidget;
-    controlPanel->setLayout(mainLayout);
-
     QString defaultPage =tr("<h1>Welcome Media Repeater</h1>");
     webView = new QWebView();
     webView->setHtml(defaultPage);
     webView->show();
 
-    QVBoxLayout *wvLayout = new QVBoxLayout;
-    wvLayout->addWidget(webView);
-    QWidget *wvWidget = new QWidget;
-    wvWidget->setLayout(wvLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(seekerLayout);
+    mainLayout->addLayout(playbackLayout);
+    mainLayout->addWidget(webView);
 
-    QSplitter *vSplitter = new QSplitter();
+    QWidget *controlPanel = new QWidget;
+    controlPanel = new QWidget;
+    controlPanel->setLayout(mainLayout);
+
+    vSplitter = new QSplitter();
     vSplitter->setOrientation(Qt::Vertical);
+    vSplitter->addWidget(videoOutput);
     vSplitter->addWidget(controlPanel);
-    vSplitter->addWidget(wvWidget);
 
     playList = new QListWidget();
     connect(playList, SIGNAL(itemActivated(QListWidgetItem *)),
@@ -417,3 +455,4 @@ void MainWindow::setupUi()
     setWindowTitle("Media Repeater");
     statusBar()->showMessage(tr("Ready"));
 }
+

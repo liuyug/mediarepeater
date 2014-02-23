@@ -8,11 +8,11 @@ MediaVideoWidget::MediaVideoWidget(QWidget *parent) :
     _label->setAutoFillBackground(true);
     _label->setBackgroundRole(QPalette::WindowText);
     _label->setForegroundRole(QPalette::Window);
-    _label->setScaledContents(true);
+    _label->setScaledContents(false);
     _label->setAlignment(Qt::AlignCenter);
     _image.fill(QColor(Qt::black));
     _imageOk = false;
-    enterImageMode();
+    enterVideoMode();
 }
 
 MediaVideoWidget::~MediaVideoWidget() 
@@ -41,19 +41,17 @@ void MediaVideoWidget::keyPressEvent(QKeyEvent* event)
 void MediaVideoWidget::setVideoImage(QString imagePath)
 {
     _imageOk = _image.load(imagePath);
-    qDebug()<<"Loading video image"<<(_imageOk?"successed":"failed")<<imagePath;
+    qDebug()<<"Loading picture"<<(_imageOk?"successed":"failed")<<imagePath;
 }
 
 void MediaVideoWidget::enterImageMode()
 {
     if(_imageOk) {
         _label->setPixmap(_image);
-    } else {
-        _label->setText(tr("Audio"));
     }
     if(!_label->isVisible())
         _label->show();
-    update();
+    _label->update();
 }
 
 void MediaVideoWidget::enterVideoMode()
@@ -67,9 +65,6 @@ void MediaVideoWidget::resizeEvent(QResizeEvent* event)
     QRect rect = this->geometry();
     rect.moveTo(0, 0);
     _label->setGeometry(rect);
-    QFont font = _label->font();
-    font.setPixelSize(rect.height() / 2);
-    _label->setFont(font);
     update();
 }
 
