@@ -44,6 +44,8 @@ class MainWindow : public QMainWindow
         void listClicked(QListWidgetItem * item);
         void markA();
         void markB();
+        // audio output data
+        void remainingSamples(int value);
 
     private:
         void setupActions();
@@ -53,6 +55,8 @@ class MainWindow : public QMainWindow
         MediaSeekSlider *seekSlider;
         Phonon::MediaObject *mediaObject;
         Phonon::AudioOutput *audioOutput;
+        // Qt4.6 do not support AudioDataOutput
+        //Phonon::AudioDataOutput *audioDataOutput;
         MediaVideoWidget *videoOutput;
         Phonon::VolumeSlider *volumeSlider;
         QMap<QString, QString> medias;

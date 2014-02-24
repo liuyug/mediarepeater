@@ -8,6 +8,7 @@
 MainWindow::MainWindow()
 {
     audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
+    //audioDataOutput = new Phonon::AudioDataOutput(this);
     videoOutput = new MediaVideoWidget(this);
     mediaObject = new Phonon::MediaObject(this);
 
@@ -20,8 +21,12 @@ MainWindow::MainWindow()
     connect(mediaObject, SIGNAL(aboutToFinish()), this, SLOT(aboutToFinish()));
     connect(mediaObject, SIGNAL(hasVideoChanged(bool)),
             this, SLOT(hasVideoChanged(bool)));
+    // for audio output data
+    //connect(audioDataOutput, SIGNAL(endOfMedia(int)),
+    //        this, SLOT(remainingSamples(int)));
 
     Phonon::createPath(mediaObject, audioOutput);
+    //Phonon::createPath(mediaObject, audioDataOutput);
     Phonon::createPath(mediaObject, videoOutput);
 
     setupActions();
@@ -200,6 +205,11 @@ void MainWindow::aboutToFinish()
                         ));
         }
     }
+}
+
+void MainWindow::remainingSamples(int value)
+{
+    qDebug()<<__FUNCTION__<<value;
 }
 
 void MainWindow::playNext()
