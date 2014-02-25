@@ -13,9 +13,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 qt4_wrap_cpp(mp_mocs mainwindow.h seekslider.h videowidget.h)
 #qt4_wrap_ui(mp_uis mainwindow.ui)
 
+if(MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+endif(MINGW)
+
 add_executable(mediarepeater
     main.cpp
-    mainwindow.cpp 
+    mainwindow.cpp
     seekslider.cpp
     videowidget.cpp
     ${mp_mocs})
