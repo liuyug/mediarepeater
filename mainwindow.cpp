@@ -396,8 +396,8 @@ void MainWindow::setupUi()
     timeLcd->setDigitCount(8);
 
     QHBoxLayout *seekerLayout = new QHBoxLayout;
-    seekerLayout->addWidget(seekSlider);
-    seekerLayout->addWidget(timeLcd);
+    seekerLayout->addWidget(seekSlider, 1);
+    seekerLayout->addWidget(timeLcd, 0);
 
     QHBoxLayout *playbackLayout = new QHBoxLayout;
     playbackLayout->addWidget(bar);
@@ -411,9 +411,9 @@ void MainWindow::setupUi()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(seekerLayout);
-    mainLayout->addLayout(playbackLayout);
-    mainLayout->addWidget(webView);
+    mainLayout->addLayout(seekerLayout, 0);
+    mainLayout->addLayout(playbackLayout, 0);
+    mainLayout->addWidget(webView, 1);
 
     QWidget *controlPanel = new QWidget;
     controlPanel = new QWidget;
