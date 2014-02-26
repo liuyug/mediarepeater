@@ -15,6 +15,9 @@ class MediaVideoWidget: public Phonon::VideoWidget
         void enterVideoMode();
         void enterImageMode();
 
+        QSize sizeHint() const {
+            return QSize(320, 240);
+        }
     protected:
         void mouseDoubleClickEvent(QMouseEvent* event);
         void keyPressEvent(QKeyEvent* event);

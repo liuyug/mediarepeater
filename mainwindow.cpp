@@ -184,6 +184,7 @@ void MainWindow::sourceChanged(const Phonon::MediaSource &source)
             break;
         }
     }
+    seekSlider->seekableChanged(true);
 }
 
 void MainWindow::aboutToFinish()
@@ -289,7 +290,7 @@ void MainWindow::hasVideoChanged(bool hasVideo)
     if (hasVideo) {
         qDebug()<<videoSize;
         if (videoOutput->height() == 0) {
-            widgetSizes[0] = videoSize ;
+            widgetSizes[0] = videoSize>0?videoSize:240;
             widgetSizes[1] -= videoSize;
         }
     } else {
