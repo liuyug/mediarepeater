@@ -32,6 +32,8 @@ class MediaSeekSlider: public QWidget
             GROOVE1,
             GROOVE2,
             GROOVEAB,
+            GROOVEA,
+            GROOVEB,
             SLIDER, // for thumb position
         };
 

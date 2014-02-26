@@ -123,6 +123,14 @@ QRect MediaSeekSlider::subControlRect(int sc) const
         if (bPosition() > 0) {
             w = w + pixelPositionFromRangeValue(bPosition()) - a;
         }
+    } else if (sc==MediaSeekSlider::GROOVEA) {
+        int a = pixelPositionFromRangeValue(aPosition());
+        x += a;
+        w = 2;
+    } else if (sc==MediaSeekSlider::GROOVEB) {
+        int b = pixelPositionFromRangeValue(bPosition());
+        x += b;
+        w = 2;
     } else if (sc==MediaSeekSlider::HANDLE) {
         x = x + pixelPositionFromRangeValue(position()) - _handleRadius + 1;
         y = height() / 2 - _handleRadius + 1;
@@ -143,7 +151,7 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     QColor grooveLight(pal.light().color());
     QColor grooveHighlight(pal.highlight().color());
     QLinearGradient lineGradient;
-
+    // draw slider bar
     subRect = subControlRect(MediaSeekSlider::GROOVE);
     painter.setPen(grooveMidlight);
     painter.setBrush(Qt::NoBrush);
@@ -158,7 +166,19 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     lineGradient.setColorAt(1.0, grooveShadow.lighter(110));
     painter.setBrush(QBrush(lineGradient));
     painter.drawRect(subRect);
-
+    // draw AB bar
+    if (_aPos > 0 && _bPos > 0) {
+        QColor abColor(Qt::red);
+        subRect = subControlRect(MediaSeekSlider::GROOVEAB);
+        painter.setPen(abColor.darker(140));
+        lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
+        lineGradient.setFinalStop(subRect.x() + 1, subRect.bottom());
+        lineGradient.setColorAt(0.0, abColor.darker(110));
+        lineGradient.setColorAt(1.0, abColor.lighter(110));
+        painter.setBrush(QBrush(lineGradient));
+        painter.drawRect(subRect);
+    }
+    // draw process bar
     subRect = subControlRect(MediaSeekSlider::GROOVE1);
     if (subRect.width() > 0) {
         painter.setPen(grooveHighlight.darker(140));
@@ -169,18 +189,31 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
         painter.setBrush(QBrush(lineGradient));
         painter.drawRect(subRect);
     }
-
-    if (_aPos > 0 || _bPos > 0) {
-        QColor abColor(Qt::red); 
-        subRect = subControlRect(MediaSeekSlider::GROOVEAB);
-        painter.setPen(abColor.darker(140));
+    // draw A and B point
+    if (_aPos > 0) {
+        QColor aColor(Qt::yellow);
+        subRect = subControlRect(MediaSeekSlider::GROOVEA);
+        painter.setPen(aColor.darker(140));
         lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
         lineGradient.setFinalStop(subRect.x() + 1, subRect.bottom());
-        lineGradient.setColorAt(0.0, abColor.darker(110));
-        lineGradient.setColorAt(1.0, abColor.lighter(110));
+        lineGradient.setColorAt(0.0, aColor.darker(110));
+        lineGradient.setColorAt(1.0, aColor.lighter(110));
         painter.setBrush(QBrush(lineGradient));
         painter.drawRect(subRect);
     }
+
+    if (_bPos > 0) {
+        QColor bColor(Qt::yellow);
+        subRect = subControlRect(MediaSeekSlider::GROOVEB);
+        painter.setPen(bColor.darker(140));
+        lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
+        lineGradient.setFinalStop(subRect.x() + 1, subRect.bottom());
+        lineGradient.setColorAt(0.0, bColor.darker(110));
+        lineGradient.setColorAt(1.0, bColor.lighter(110));
+        painter.setBrush(QBrush(lineGradient));
+        painter.drawRect(subRect);
+    }
+
 #if SLIDERDRAG
     if (_mouseIn) {
         subRect = subControlRect(MediaSeekSlider::HANDLE);
