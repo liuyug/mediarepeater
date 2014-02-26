@@ -289,11 +289,13 @@ void MainWindow::hasVideoChanged(bool hasVideo)
     qDebug()<<__FUNCTION__<<widgetSizes;
     if (hasVideo) {
         qDebug()<<videoSize;
+        videoOutput->enterVideoMode();
         if (videoOutput->height() == 0) {
             widgetSizes[0] = videoSize>0?videoSize:240;
             widgetSizes[1] -= videoSize;
         }
     } else {
+        videoOutput->enterImageMode();
         videoSize = widgetSizes[0];
         widgetSizes[1] += widgetSizes[0];
         widgetSizes[0] = 0;

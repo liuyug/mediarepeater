@@ -25,8 +25,6 @@ class MediaVideoWidget: public Phonon::VideoWidget
 
     private:
         QLabel *_label;
-        QPixmap _image;
-        bool _imageOk;
 };
 
 // vim: sw=4 ts=4 tw=80
