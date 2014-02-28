@@ -281,13 +281,13 @@ void MainWindow::hasVideoChanged(bool hasVideo)
 #if HIDE_VIDEO
     if (hasVideo) {
         videoOutput->enterVideoMode();
-        if (!videoOutput->isVisible()) {
-            videoOutput->show();
+        if (!videoWidget->isVisible()) {
+            videoWidget->show();
         }
     } else {
         videoOutput->enterImageMode();
-        if (videoOutput->isVisible()) {
-            videoOutput->hide();
+        if (videoWidget->isVisible()) {
+            videoWidget->hide();
         }
     }
 #else
