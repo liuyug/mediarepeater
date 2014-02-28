@@ -61,6 +61,7 @@ class MainWindow : public QMainWindow
         Phonon::VolumeSlider *volumeSlider;
         QMap<QString, QString> medias;
 
+        QWidget *videoWidget;
         QSplitter *vSplitter;
 
         QAction *playAction;

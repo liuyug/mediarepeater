@@ -9,7 +9,13 @@ MainWindow::MainWindow()
 {
     audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
     //audioDataOutput = new Phonon::AudioDataOutput(this);
-    videoOutput = new MediaVideoWidget(this);
+
+    videoWidget = new QWidget(this);
+    videoOutput = new MediaVideoWidget(videoWidget);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(videoOutput);
+    videoWidget->setLayout(layout);
+
     mediaObject = new Phonon::MediaObject(this);
 
     mediaObject->setTickInterval(1000);
@@ -290,7 +296,7 @@ void MainWindow::hasVideoChanged(bool hasVideo)
     if (hasVideo) {
         qDebug()<<videoSize;
         videoOutput->enterVideoMode();
-        if (videoOutput->height() == 0) {
+        if (videoWidget->height() == 0) {
             widgetSizes[0] = videoSize>0?videoSize:240;
             widgetSizes[1] -= videoSize;
         }
@@ -423,7 +429,7 @@ void MainWindow::setupUi()
 
     vSplitter = new QSplitter();
     vSplitter->setOrientation(Qt::Vertical);
-    vSplitter->addWidget(videoOutput);
+    vSplitter->addWidget(videoWidget);
     vSplitter->addWidget(controlPanel);
 
     playList = new QListWidget();
