@@ -191,6 +191,7 @@ void MainWindow::sourceChanged(const Phonon::MediaSource &source)
         }
     }
     seekSlider->seekableChanged(true);
+    clearABAction->trigger();
 }
 
 void MainWindow::aboutToFinish()
