@@ -168,7 +168,7 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     painter.drawRect(subRect);
     // draw AB bar
     if (_aPos > 0 && _bPos > 0) {
-        QColor abColor(Qt::red);
+        QColor abColor(pal.linkVisited().color());
         subRect = subControlRect(MediaSeekSlider::GROOVEAB);
         painter.setPen(abColor.darker(140));
         lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
@@ -191,7 +191,7 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     }
     // draw A and B point
     if (_aPos > 0) {
-        QColor aColor(Qt::yellow);
+        QColor aColor(pal.linkVisited().color());
         subRect = subControlRect(MediaSeekSlider::GROOVEA);
         painter.setPen(aColor.darker(140));
         lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
@@ -203,7 +203,7 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     }
 
     if (_bPos > 0) {
-        QColor bColor(Qt::yellow);
+        QColor bColor(pal.linkVisited().color());
         subRect = subControlRect(MediaSeekSlider::GROOVEB);
         painter.setPen(bColor.darker(140));
         lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
@@ -242,7 +242,7 @@ void MediaSeekSlider::setValue(int v)
         _value = maximum();
     else
         _value = v;
-    emit valueChanged(_value); 
+    emit valueChanged(_value);
     if (hasTracking()) {
         _position = _value;
         update();
@@ -251,7 +251,7 @@ void MediaSeekSlider::setValue(int v)
 
 void MediaSeekSlider::setPosition(int pos)
 {
-    if (hasTracking()) 
+    if (hasTracking())
     {
         if (pos < minimum())
             _position = minimum();
@@ -445,7 +445,7 @@ int MediaSeekSlider::rangeValueFromPixelPosition(int pos) const
 
     uint range = maximum() - minimum();
 
-    if ((uint)span > range) 
+    if ((uint)span > range)
     {
         int tmp = (2 * p * range + span) / (2 * span);
         return tmp + min;
