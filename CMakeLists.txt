@@ -10,7 +10,7 @@ set(QT_USE_PHONON 1)
 include(${QT_USE_FILE})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-qt4_wrap_cpp(mp_mocs mainwindow.h seekslider.h videowidget.h)
+qt4_wrap_cpp(mp_mocs mainwindow.h seekslider.h videowidget.h audiowidget.h)
 #qt4_wrap_ui(mp_uis mainwindow.ui)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -26,6 +26,7 @@ add_executable(mediarepeater
     mainwindow.cpp
     seekslider.cpp
     videowidget.cpp
+    audiowidget.cpp
     ${mp_mocs})
 target_link_libraries(mediarepeater ${QT_LIBRARIES})
 

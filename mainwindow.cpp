@@ -3,12 +3,13 @@
 
 #include "seekslider.h"
 #include "videowidget.h"
+#include "audiowidget.h"
 #include "mainwindow.h"
 
 MainWindow::MainWindow()
 {
     audioOutput = new Phonon::AudioOutput(Phonon::VideoCategory, this);
-    //audioDataOutput = new Phonon::AudioDataOutput(this);
+    audioDataOutput = new Phonon::AudioDataOutput(this);
 
     videoWidget = new QWidget(this);
     videoOutput = new MediaVideoWidget(videoWidget);
@@ -27,12 +28,9 @@ MainWindow::MainWindow()
     connect(mediaObject, SIGNAL(aboutToFinish()), this, SLOT(aboutToFinish()));
     connect(mediaObject, SIGNAL(hasVideoChanged(bool)),
             this, SLOT(hasVideoChanged(bool)));
-    // for audio output data
-    //connect(audioDataOutput, SIGNAL(endOfMedia(int)),
-    //        this, SLOT(remainingSamples(int)));
 
     Phonon::createPath(mediaObject, audioOutput);
-    //Phonon::createPath(mediaObject, audioDataOutput);
+    Phonon::createPath(mediaObject, audioDataOutput);
     Phonon::createPath(mediaObject, videoOutput);
 
     setupActions();
@@ -175,6 +173,7 @@ void MainWindow::sourceChanged(const Phonon::MediaSource &source)
     QString message = QString(tr("Playing %1")).arg(fi.fileName());
     qDebug()<<message;
     statusBar()->showMessage(message);
+    audioWidget->init(audioDataOutput->sampleRate());
     // hasVideoChanged don't been emited on music.
     // only write here.
     QString playingFile = source.fileName();
@@ -418,8 +417,14 @@ void MainWindow::setupUi()
     webView->setHtml(defaultPage);
     webView->show();
 
+    audioWidget = new MediaAudioWidget();
+    // for audio output data
+    connect(audioDataOutput, SIGNAL(dataReady(const QMap<Phonon::AudioDataOutput::Channel, QVector<qint16> >&)),
+            audioWidget, SLOT(dataReceived(const QMap<Phonon::AudioDataOutput::Channel, QVector<qint16> >&)));
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(audioWidget, 0);
     mainLayout->addLayout(seekerLayout, 0);
     mainLayout->addLayout(playbackLayout, 0);
     mainLayout->addWidget(webView, 1);
@@ -439,7 +444,7 @@ void MainWindow::setupUi()
 
     QSettings settings("default.pls", QSettings::IniFormat);
     settings.setIniCodec("utf-8");
-    int plsCount = settings.value("playlist/NumberOfEntries", 0).toInt(); 
+    int plsCount = settings.value("playlist/NumberOfEntries", 0).toInt();
     QString filepath, basename;
     QFileInfo fi;
     QByteArray ba;

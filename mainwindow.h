@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <phonon/audiooutput.h>
+#include <phonon/audiodataoutput.h>
 #include <phonon/videowidget.h>
 #include <phonon/seekslider.h>
 #include <phonon/mediaobject.h>
@@ -18,6 +19,7 @@ class QSplitter;
 
 class MediaSeekSlider;
 class MediaVideoWidget;
+class MediaAudioWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -55,13 +57,13 @@ class MainWindow : public QMainWindow
         MediaSeekSlider *seekSlider;
         Phonon::MediaObject *mediaObject;
         Phonon::AudioOutput *audioOutput;
-        // Qt4.6 do not support AudioDataOutput
-        //Phonon::AudioDataOutput *audioDataOutput;
+        Phonon::AudioDataOutput *audioDataOutput;
         MediaVideoWidget *videoOutput;
         Phonon::VolumeSlider *volumeSlider;
         QMap<QString, QString> medias;
 
         QWidget *videoWidget;
+        MediaAudioWidget *audioWidget;
         QSplitter *vSplitter;
 
         QAction *playAction;
