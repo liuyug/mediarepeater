@@ -82,6 +82,7 @@ class MainWindow : public QMainWindow
         // playlist
         QAction *addAction;
         QAction *removeAction;
+        QAction *removeAllAction;
 
         QLCDNumber *timeLcd;
         QListWidget *playList;

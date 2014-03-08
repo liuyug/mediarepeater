@@ -340,6 +340,7 @@ void MainWindow::setupActions()
     // for playlist
     addAction = new QAction(QIcon::fromTheme("list-add"), tr("Add item"), this);
     removeAction = new QAction(QIcon::fromTheme("list-remove"), tr("Remove item"), this);
+    removeAllAction = new QAction(tr("Remove all items"), this);
 
     connect(playAction, SIGNAL(triggered()), mediaObject, SLOT(play()));
     connect(pauseAction, SIGNAL(triggered()), mediaObject, SLOT(pause()) );
@@ -382,8 +383,6 @@ void MainWindow::setupUi()
     bar->addAction(pauseAction);
     bar->addAction(stopAction);
     bar->addAction(repeatAction);
-    bar->addAction(previousAction);
-    bar->addAction(nextAction);
     bar->addAction(aAction);
     bar->addAction(bAction);
     bar->addAction(repeatABAction);
@@ -436,6 +435,7 @@ void MainWindow::setupUi()
     playList = new QListWidget();
     connect(playList, SIGNAL(itemActivated(QListWidgetItem *)),
             this, SLOT(listClicked(QListWidgetItem *)));
+    connect(removeAllAction, SIGNAL(triggered()), playList, SLOT(clear()));
 
     QSettings settings("default.pls", QSettings::IniFormat);
     settings.setIniCodec("utf-8");
@@ -452,9 +452,16 @@ void MainWindow::setupUi()
         medias[basename] = filepath;
     }
 
+    QToolButton *tb = new QToolButton(playList);
+    tb->setDefaultAction(removeAction);
+    QMenu *removeMenu = new QMenu(tb);
+    removeMenu->addAction(removeAction);
+    removeMenu->addAction(removeAllAction);
+    tb->setMenu(removeMenu);
+
     bar = new QToolBar;
     bar->addAction(addAction);
-    bar->addAction(removeAction);
+    bar->addWidget(tb);
 
     QVBoxLayout *plLayout = new QVBoxLayout;
     plLayout->addWidget(playList);
