@@ -102,8 +102,10 @@ void MainWindow::removeFile()
 void MainWindow::about()
 {
     QMessageBox::information(this, tr("About Media Repeater"),
-            tr("The Media Repeater use Phonon - the multimedia"
-                " framework that comes with Qt - to create a simple player."));
+            tr("\n"
+                "Created by LIU Yugang <liuyug@gmail.com>\n"
+                "Qt4.6 with Phonon"
+              ));
 }
 
 void MainWindow::stateChanged(Phonon::State newState, Phonon::State /* oldState */)
