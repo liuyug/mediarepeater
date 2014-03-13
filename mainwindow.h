@@ -68,6 +68,8 @@ class MainWindow : public QMainWindow
         QAction *pauseAction;
         QAction *stopAction;
         QAction *repeatAction;
+        QAction *seekForwardAction;
+        QAction *seekBackwardAction;
         QAction *nextAction;
         QAction *previousAction;
         QAction *aAction;

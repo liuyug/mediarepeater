@@ -13,7 +13,7 @@ class MediaSeekSlider: public QWidget
         MediaSeekSlider(QWidget *parent);
         MediaSeekSlider(Phonon::MediaObject * mo, QWidget *parent);
         virtual ~MediaSeekSlider() {};
-        Phonon::MediaObject * mediaObject() const; 
+        Phonon::MediaObject * mediaObject() const;
         int aPosition() const { return _aPos; };
         int bPosition() const { return _bPos; };
         int value() const { return _value; };
@@ -24,6 +24,8 @@ class MediaSeekSlider: public QWidget
         void setRange(int min, int max);
         int position() const { return _position; };
         void setPosition(int pos);
+        void setStep(int msec) { _step = msec; };
+        int step() { return _step; };
 
         enum {
             NONE = 0,
@@ -44,6 +46,8 @@ class MediaSeekSlider: public QWidget
         void setTracking(bool v) { _tracking = v; };
         void setOrientation(Qt::Orientation o) { _orientation = o; };
         void seek(int msec);
+        void seekForward();
+        void seekBackward();
         void tick(qint64 msec);
         void length(qint64 msec);
         void seekableChanged(bool isSeekable);
@@ -55,8 +59,9 @@ class MediaSeekSlider: public QWidget
         void clearABPosition() { _aPos = _bPos = 0; };
 
     signals:
-            void valueChanged(int v);
-            void handleMoved(int v);
+        void valueChanged(int v);
+        void handleMoved(int v);
+
     protected:
         void paintEvent(QPaintEvent *event);
         virtual void mouseMoveEvent(QMouseEvent *event);
@@ -88,6 +93,7 @@ class MediaSeekSlider: public QWidget
         int _pressedControl;
         int _mouseIn;
         QRect subControlRect(int sc) const;
+        int _step;
 };
 
 // vim: sw=4 ts=4 tw=80

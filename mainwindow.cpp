@@ -1,9 +1,11 @@
 #include <QtGui>
 #include <QtWebKit>
 
+#include "version.h"
 #include "seekslider.h"
 #include "videowidget.h"
 #include "mainwindow.h"
+
 
 MainWindow::MainWindow()
 {
@@ -102,10 +104,11 @@ void MainWindow::removeFile()
 void MainWindow::about()
 {
     QMessageBox::information(this, tr("About Media Repeater"),
-            tr("\n"
+            QString(tr("Media Repeater\n"
+                "Version: %1\n"
                 "Created by LIU Yugang <liuyug@gmail.com>\n"
                 "Qt4.6 with Phonon"
-              ));
+              )).arg(version));
 }
 
 void MainWindow::stateChanged(Phonon::State newState, Phonon::State /* oldState */)
@@ -118,17 +121,23 @@ void MainWindow::stateChanged(Phonon::State newState, Phonon::State /* oldState 
             playAction->setEnabled(false);
             pauseAction->setEnabled(true);
             stopAction->setEnabled(true);
+            seekForwardAction->setEnabled(true);
+            seekBackwardAction->setEnabled(true);
             break;
         case Phonon::StoppedState:
             stopAction->setEnabled(false);
             playAction->setEnabled(true);
             pauseAction->setEnabled(false);
+            seekForwardAction->setEnabled(false);
+            seekBackwardAction->setEnabled(false);
             timeLcd->display("00:00:00");
             break;
         case Phonon::PausedState:
             pauseAction->setEnabled(false);
             stopAction->setEnabled(true);
             playAction->setEnabled(true);
+            seekForwardAction->setEnabled(true);
+            seekBackwardAction->setEnabled(true);
             break;
         case Phonon::BufferingState:
             break;
@@ -317,27 +326,38 @@ void MainWindow::hasVideoChanged(bool hasVideo)
 void MainWindow::setupActions()
 {
     playAction = new QAction(style()->standardIcon(QStyle::SP_MediaPlay), tr("Play"), this);
+    playAction->setShortcut(tr(" "));
     playAction->setDisabled(true);
     pauseAction = new QAction(style()->standardIcon(QStyle::SP_MediaPause), tr("Pause"), this);
+    pauseAction->setShortcut(tr(" "));
     pauseAction->setDisabled(true);
     stopAction = new QAction(style()->standardIcon(QStyle::SP_MediaStop), tr("Stop"), this);
+    stopAction->setShortcut(tr("S"));
     stopAction->setDisabled(true);
-    repeatAction = new QAction(QIcon::fromTheme("view-refresh"), tr("Repeat"), this);
+    seekForwardAction = new QAction(style()->standardIcon(QStyle::SP_MediaSeekForward), tr("Forward"), this);
+    seekForwardAction->setShortcut(Qt::Key_Right);
+    seekForwardAction->setDisabled(true);
+    seekBackwardAction = new QAction(style()->standardIcon(QStyle::SP_MediaSeekBackward), tr("Backward"), this);
+    seekBackwardAction->setShortcut(Qt::Key_Left);
+    seekBackwardAction->setDisabled(true);
+    repeatAction = new QAction(QIcon::fromTheme("view-refresh"), tr("Repeat media"), this);
     repeatAction->setCheckable(true);
+    repeatAction->setShortcut(tr("Ctrl+R"));
     nextAction = new QAction(style()->standardIcon(QStyle::SP_MediaSkipForward), tr("Next"), this);
     previousAction = new QAction(style()->standardIcon(QStyle::SP_MediaSkipBackward), tr("Previous"), this);
     addFilesAction = new QAction(tr("Add &Files"), this);
-    addFilesAction->setShortcut(tr("Ctrl+F"));
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setShortcuts(QKeySequence::Quit);
     aboutAction = new QAction(tr("A&bout"), this);
     aboutQtAction = new QAction(tr("About &Qt"), this);
     aAction = new QAction(tr("Mark A"), this);
-    aAction->setShortcut(tr("Ctrl+A"));
+    aAction->setShortcut(tr("A"));
     bAction = new QAction(tr("Mark B"), this);
-    bAction->setShortcut(tr("Ctrl+B"));
+    bAction->setShortcut(tr("B"));
     clearABAction = new QAction(tr("Clear AB"), this);
+    clearABAction->setShortcut(tr("C"));
     repeatABAction = new QAction(tr("Repeat AB"), this);
+    repeatABAction->setShortcut(tr("R"));
     repeatABAction->setCheckable(true);
     // for playlist
     addAction = new QAction(QIcon::fromTheme("list-add"), tr("Add item"), this);
@@ -366,6 +386,16 @@ void MainWindow::setupMenus()
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    QMenu *playMenu = menuBar()->addMenu(tr("&Play"));
+    playMenu->addAction(playAction);
+    playMenu->addAction(pauseAction);
+    playMenu->addAction(stopAction);
+    playMenu->addSeparator();
+    playMenu->addAction(seekForwardAction);
+    playMenu->addAction(seekBackwardAction);
+    playMenu->addSeparator();
+    playMenu->addAction(repeatAction);
+
     QMenu *repeatMenu = menuBar()->addMenu(tr("&Repeat"));
     repeatMenu->addAction(aAction);
     repeatMenu->addAction(bAction);
@@ -385,6 +415,8 @@ void MainWindow::setupUi()
     bar->addAction(pauseAction);
     bar->addAction(stopAction);
     bar->addAction(repeatAction);
+    bar->addAction(seekBackwardAction);
+    bar->addAction(seekForwardAction);
     bar->addAction(aAction);
     bar->addAction(bAction);
     bar->addAction(repeatABAction);
@@ -393,6 +425,8 @@ void MainWindow::setupUi()
     seekSlider = new MediaSeekSlider(this);
     seekSlider->setMediaObject(mediaObject);
     connect(clearABAction, SIGNAL(triggered()), seekSlider, SLOT(clearABPosition()));
+    connect(seekForwardAction, SIGNAL(triggered()), seekSlider, SLOT(seekForward()));
+    connect(seekBackwardAction, SIGNAL(triggered()), seekSlider, SLOT(seekBackward()));
 
     volumeSlider = new Phonon::VolumeSlider(this);
     volumeSlider->setAudioOutput(audioOutput);
@@ -420,13 +454,11 @@ void MainWindow::setupUi()
     webView->show();
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout = new QVBoxLayout;
     mainLayout->addLayout(seekerLayout, 0);
     mainLayout->addLayout(playbackLayout, 0);
     mainLayout->addWidget(webView, 1);
 
     QWidget *controlPanel = new QWidget;
-    controlPanel = new QWidget;
     controlPanel->setLayout(mainLayout);
 
     vSplitter = new QSplitter();
@@ -441,7 +473,7 @@ void MainWindow::setupUi()
 
     QSettings settings("default.pls", QSettings::IniFormat);
     settings.setIniCodec("utf-8");
-    int plsCount = settings.value("playlist/NumberOfEntries", 0).toInt(); 
+    int plsCount = settings.value("playlist/NumberOfEntries", 0).toInt();
     QString filepath, basename;
     QFileInfo fi;
     QByteArray ba;

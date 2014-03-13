@@ -31,6 +31,7 @@ void MediaSeekSlider::init()
     _tracking = false;
     _pressedControl = MediaSeekSlider::NONE;
     _mouseIn = 0;
+    _step = 5000;
     setOrientation(Qt::Horizontal);
     QSizePolicy sp(QSizePolicy::Expanding, QSizePolicy::Fixed, QSizePolicy::Slider);
     if (orientation() == Qt::Vertical)
@@ -302,6 +303,18 @@ void MediaSeekSlider::seek(int msec)
     if (!_ticking && _media) {
         _media->seek(msec);
     }
+}
+
+void MediaSeekSlider::seekForward()
+{
+    setPosition(position() + step());
+    update();
+}
+
+void MediaSeekSlider::seekBackward()
+{
+    setPosition(position() - step());
+    update();
 }
 
 void MediaSeekSlider::tick(qint64 msec)

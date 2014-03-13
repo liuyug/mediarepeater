@@ -22,6 +22,7 @@ if(MINGW AND (${CMAKE_BUILD_TYPE} STREQUAL "Release"))
 endif(MINGW AND (${CMAKE_BUILD_TYPE} STREQUAL "Release"))
 
 add_executable(mediarepeater
+    version.cpp
     main.cpp
     mainwindow.cpp
     seekslider.cpp
