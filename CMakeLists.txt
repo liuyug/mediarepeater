@@ -30,5 +30,14 @@ add_executable(mediarepeater
     ${mp_mocs})
 target_link_libraries(mediarepeater ${QT_LIBRARIES})
 
+install(TARGETS mediarepeater RUNTIME DESTINATION bin)
 
-# vim: sw=4 ts=4 tw=80
+set(CPACK_PACKAGE_NAME "MediaRepeater")
+set(CPACK_PACKAGE_VERSION_MAJOR "0")
+set(CPACK_PACKAGE_VERSION_MINOR "1")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/license.txt")
+
+include(CPack)
+
+# vim: sw=4 ts=4

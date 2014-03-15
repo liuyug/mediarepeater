@@ -50,4 +50,6 @@ ToDo
 + Use QtMultimedia to support Qt5
 + Add sound wave window for audio output and input
 
-
+License
+-------
+Please follow GPLv3. Thanks.
