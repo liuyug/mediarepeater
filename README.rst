@@ -1,6 +1,8 @@
 Media Repeater
 ==============
 
+.. section-numbering::
+
 For learning language repeat playback media files.
 
 requirement
@@ -40,6 +42,36 @@ Windows Install
   + imageformats
   + iconengines
 
+FAQ
+----
+
+Failed to load phonon
+~~~~~~~~~~~~~~~~~~~~~
+Catching a message "WARNING: bool Phonon::FactoryPrivate::createBackend() phonon backend plugin could not be loaded", phonon don't find its backend.
+
+To check phonon backend path, set enviroment various::
+
+    export PHONON_DEBUG=5
+
+and run application in console. It will show phonon searching path, such as::
+
+    bool Phonon::FactoryPrivate::createBackend() "/usr/lib/qt/plugins/phonon_backend" does not exist
+
+It said it is invalid path of phonon backend. To correct it, set::
+
+    export QT_PLUGIN_PATH=${QT_PLUGIN_PATH}:/usr/lib/your_path/plugins
+
+such as::
+
+    export QT_PLUGIN_PATH=${QT_PLUGIN_PATH}:/usr/lib/kde4/plugins
+
+.. tip::
+
+   To change phonon backend player, set PHONON_BACKEND::
+
+       export PHONON_BACKEND=phonon_gstreamer
+       export PHONON_BACKEND=phonon_mplayer
+       export PHONON_BACKEND=phonon_xine
 
 .. _`qt-project`: http://download.qt-project.org/official_releases/qt/4.8/4.8.5/qt-win-opensource-4.8.5-mingw.exe
 .. _CMake: http://www.cmake.org/
