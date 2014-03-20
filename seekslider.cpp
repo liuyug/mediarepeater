@@ -147,24 +147,20 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     const QPalette & pal = palette();
-    QColor grooveShadow(pal.shadow().color());
-    QColor grooveMidlight(pal.midlight().color());
-    QColor grooveLight(pal.light().color());
-    QColor grooveHighlight(pal.highlight().color());
     QLinearGradient lineGradient;
     // draw slider bar
     subRect = subControlRect(MediaSeekSlider::GROOVE);
-    painter.setPen(grooveMidlight);
+    painter.setPen(pal.window().color().darker(110));
     painter.setBrush(Qt::NoBrush);
     painter.drawRect(subRect.adjusted(-1, -1, 0, 0));
-    painter.setPen(grooveMidlight.lighter(130));
+    painter.setPen(pal.window().color().lighter(110));
     painter.setBrush(Qt::NoBrush);
     painter.drawRect(subRect.adjusted(0, 0, 1, 1));
-    painter.setPen(grooveShadow.darker(150));
+    painter.setPen(pal.shadow().color().darker(150));
     lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
     lineGradient.setFinalStop(subRect.x() + 1, subRect.bottom());
-    lineGradient.setColorAt(0.0, grooveShadow.darker(110));
-    lineGradient.setColorAt(1.0, grooveShadow.lighter(110));
+    lineGradient.setColorAt(0.0, pal.shadow().color().darker(110));
+    lineGradient.setColorAt(1.0, pal.shadow().color().lighter(110));
     painter.setBrush(QBrush(lineGradient));
     painter.drawRect(subRect);
     // draw AB bar
@@ -182,11 +178,11 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
     // draw process bar
     subRect = subControlRect(MediaSeekSlider::GROOVE1);
     if (subRect.width() > 0) {
-        painter.setPen(grooveHighlight.darker(140));
+        painter.setPen(pal.highlight().color().darker(140));
         lineGradient.setStart(subRect.x() + 1, subRect.y() + 1);
         lineGradient.setFinalStop(subRect.x() + 1, subRect.bottom());
-        lineGradient.setColorAt(0.0, grooveHighlight.darker(110));
-        lineGradient.setColorAt(1.0, grooveHighlight.lighter(110));
+        lineGradient.setColorAt(0.0, pal.highlight().color().darker(110));
+        lineGradient.setColorAt(1.0, pal.highlight().color().lighter(110));
         painter.setBrush(QBrush(lineGradient));
         painter.drawRect(subRect);
     }
@@ -221,12 +217,12 @@ void MediaSeekSlider::paintEvent(QPaintEvent *event)
         painter.setRenderHint(QPainter::Antialiasing);
         QColor handleColor;
         if (_pressedControl == MediaSeekSlider::HANDLE) {
-            handleColor = grooveHighlight.darker(150);
+            handleColor = pal.highlight().color().darker(150);
         } else {
-            handleColor = grooveShadow.darker(150);
+            handleColor = pal.shadow().color().darker(150);
         }
         painter.setPen(handleColor);
-        painter.setBrush(grooveLight);
+        painter.setBrush(pal.light().color());
         painter.drawEllipse(subRect.center(), _handleRadius, _handleRadius);
         painter.setPen(Qt::NoPen);
         painter.setBrush(handleColor);
