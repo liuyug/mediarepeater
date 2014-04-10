@@ -6,7 +6,7 @@ Summary:	Repeat playback media files to learning language
 Group:		Applications/Multimedia/Education
 License:	GPLv3
 URL:		https://github.com/liuyug/mediarepeater
-Source0:	%{name}-%{version}.tar.bz2
+Source0:	%{name}-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 
@@ -19,7 +19,7 @@ Repeat playback media files to learning language
 
 
 %build
-cmake ./ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_RELEASE_TYPE=Release
+cmake ./ -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
 make %{?_smp_mflags}
 
 
