@@ -103,7 +103,7 @@ void MainWindow::removeFile()
 
 void MainWindow::about()
 {
-    QMessageBox::information(this, tr("About Media Repeater"),
+    QMessageBox::about(this, tr("About Media Repeater"),
             QString(tr("Media Repeater\n"
                 "Version: %1\n"
                 "Created by LIU Yugang <liuyug@gmail.com>\n"
@@ -409,6 +409,12 @@ void MainWindow::setupMenus()
 
 void MainWindow::setupUi()
 {
+    QIcon icon;
+    icon = QIcon("mediarepeater.png");
+    if(icon.isNull()) {
+        icon = QIcon::fromTheme("mediarepeater.png");
+    }
+    setWindowIcon(icon);
     QToolBar *bar = new QToolBar;
 
     bar->addAction(playAction);

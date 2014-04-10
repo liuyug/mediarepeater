@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Media Repeater
+Comment=Repeat playback media files to learning language
+Exec=mediarepeater
+Icon=mediarepeater
+Terminal=false
+Type=Application
+Categories=Application;
+StartupNotify=true
+
