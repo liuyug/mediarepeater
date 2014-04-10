@@ -46,7 +46,9 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-    QSettings settings("default.pls", QSettings::IniFormat);
+    QString confdir = QDir::homePath() + QDir::separator() + (".config") + QDir::separator() + "mediarepeater";
+    QDir().mkpath(confdir);
+    QSettings settings(confdir + QDir::separator() + "default.pls", QSettings::IniFormat);
     settings.setIniCodec("utf-8");
     settings.clear();
     int count = playList->count();
@@ -477,7 +479,9 @@ void MainWindow::setupUi()
             this, SLOT(listClicked(QListWidgetItem *)));
     connect(removeAllAction, SIGNAL(triggered()), playList, SLOT(clear()));
 
-    QSettings settings("default.pls", QSettings::IniFormat);
+    QString confdir = QDir::homePath() + QDir::separator() + (".config") + QDir::separator() + "mediarepeater";
+    QDir().mkpath(confdir);
+    QSettings settings(confdir + QDir::separator() + "default.pls", QSettings::IniFormat);
     settings.setIniCodec("utf-8");
     int plsCount = settings.value("playlist/NumberOfEntries", 0).toInt();
     QString filepath, basename;
