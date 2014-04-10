@@ -27,6 +27,8 @@ make %{?_smp_mflags}
 rm -rf %{buildroot}
 make install DESTDIR=%{buildroot}
 
+%post
+update-desktop-database %{_prefix}/share/applications
 
 %clean
 rm -rf %{buildroot}
