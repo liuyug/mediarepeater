@@ -410,9 +410,9 @@ void MainWindow::setupMenus()
 void MainWindow::setupUi()
 {
     QIcon icon;
-    icon = QIcon("mediarepeater.png");
+    icon = QIcon("mediarepeater_32.png");
     if(icon.isNull()) {
-        icon = QIcon::fromTheme("mediarepeater.png");
+        icon = QIcon::fromTheme("mediarepeater_32.png");
     }
     setWindowIcon(icon);
     QToolBar *bar = new QToolBar;

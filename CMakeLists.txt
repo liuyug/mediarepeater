@@ -43,6 +43,7 @@ target_link_libraries(mediarepeater ${LIBS})
 if(NOT WIN32)
     install(TARGETS mediarepeater RUNTIME DESTINATION bin)
     install(FILES ${CMAKE_SOURCE_DIR}/installer/mediarepeater.png
+        ${CMAKE_SOURCE_DIR}/installer/mediarepeater_32.png
         DESTINATION share/pixmaps)
     install(FILES ${CMAKE_SOURCE_DIR}/installer/mediarepeater.desktop
         DESTINATION share/applications)
